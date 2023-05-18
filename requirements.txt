@@ -32,4 +32,5 @@ tzdata==2023.3
 tzlocal==4.3
 urllib3==1.26.15
 wsproto==1.2.0
-Flask
+flask
+gunicorn
