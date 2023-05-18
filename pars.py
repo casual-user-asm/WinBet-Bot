@@ -7,11 +7,19 @@ from selenium.webdriver.firefox.service import Service
 from bs4 import BeautifulSoup
 import requests
 import emoji
+import os
 
 # Settings to use Firefox with Selenium.
-options = Options()
-options.binary_location = r'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
-browser = webdriver.Firefox(executable_path='C:\\Users\\Влад\\Desktop\\some\\python_projects\\WinBet_Bot\\firefoxdriver\\geckodriver.exe', options=options)
+# options = Options()
+# options.binary_location = r'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
+# browser = webdriver.Firefox(executable_path='C:\\Users\\Влад\\Desktop\\some\\python_projects\\WinBet_Bot\\firefoxdriver\\geckodriver.exe', options=options)
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--no-sandbox")
+browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
 # Function to determine the matches that are already going, and then we call the function to find the page with the live broadcast of the match.
 def current_match():
@@ -47,7 +55,10 @@ def live_broadcast_page(match_name):
     
     while True:
         try:
-
+            if len(match_name) < 1:
+                return 'There are no matches now'
+                break
+                
             browser.get('https://hawk.live/ru')
             browser.implicitly_wait(10)
                     
