@@ -35,7 +35,7 @@ def current_match():
     current_matches = []
     for num in range(len(all_matches)):
         for match in all_matches:
-            if match.find('span', class_='esport-match-duration-dynamic') or match.find('span', class_='cybersport-matches__matches-games-count'):
+            if match.find('span', class_='esport-match-duration-dynamic') or match.find('span', class_='cybersport-matches__matches-games-count') or match.find('span', class_='live-phase'):
                 match_name = match.find('div', class_='cybersport-matches__matches-block cybersport-matches__matches-block-left').find('p', class_='cybersport-matches__matches-name').text
                 match_name2 = match.find('div', class_='cybersport-matches__matches-block cybersport-matches__matches-block-right').find('p', class_='cybersport-matches__matches-name').text
                 current_match_name = f'{match_name} {match_name2}'
