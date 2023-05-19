@@ -20,7 +20,8 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-dev-shm-usage")
 chrome_options.add_argument("--no-sandbox")
 browser = webdriver.Chrome(os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
+browser.get('https://hawk.live/ru')
+browser.implicitly_wait(10)
 
 # Function to determine the matches that are already going, and then we call the function to find the page with the live broadcast of the match.
 def current_match():
@@ -59,9 +60,6 @@ def live_broadcast_page(match_name):
             if len(match_name) < 1:
                 return 'There are no matches now'
                 break
-                
-            browser.get('https://hawk.live/ru')
-            browser.implicitly_wait(10)
                     
             all_current_matches = []
             formatted_current_matches = []
