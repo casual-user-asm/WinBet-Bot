@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
@@ -15,17 +14,12 @@ import os
 # options.binary_location = r'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
 # browser = webdriver.Firefox(executable_path='C:\\Users\\Влад\\Desktop\\some\\python_projects\\WinBet_Bot\\firefoxdriver\\geckodriver.exe', options=options)
 
-# chrome_options = webdriver.ChromeOptions()
-# chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-# chrome_options.add_argument("--headless")
-# chrome_options.add_argument("--disable-dev-shm-usage")
-# chrome_options.add_argument("--no-sandbox")
-# browser = webdriver.Chrome(os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
-options = FirefoxOptions()
-options.add_argument('--no-sandbox')
-options.add_argument("--headless")
-browser = webdriver.Firefox(options=options, executable_path=os.environ.get("GECKODRIVER_PATH"),firefox_binary=os.environ.get("FIREFOX_BIN"))
+chrome_options = webdriver.ChromeOptions()
+chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--no-sandbox")
+browser = webdriver.Chrome(os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
 
 # Function to determine the matches that are already going, and then we call the function to find the page with the live broadcast of the match.
