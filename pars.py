@@ -137,7 +137,6 @@ def hero_set():
     
     first_team_hero_set = hero_set[:5]
     second_team_hero_set = hero_set[5:]
-    browser.quit()
     
     return prediction(first_team_hero_set, second_team_hero_set, team_names)
 
