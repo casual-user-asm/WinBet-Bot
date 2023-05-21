@@ -10,19 +10,16 @@ import emoji
 import os
 
 # Settings to use Firefox with Selenium.
-# options = Options()
-# options.binary_location = r'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
-# browser = webdriver.Firefox(executable_path='C:\\Users\\Влад\\Desktop\\some\\python_projects\\WinBet_Bot\\firefoxdriver\\geckodriver.exe', options=options)
-
-
-chrome_options = webdriver.ChromeOptions()
-chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--no-sandbox")
-browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
-
+options = Options()
+options.binary_location = r'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
+browser = webdriver.Firefox(executable_path='C:\\Users\\Влад\\Desktop\\some\\python_projects\\WinBet_Bot\\firefoxdriver\\geckodriver.exe', options=options)
+# chrome_options = webdriver.ChromeOptions()
+# chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+# chrome_options.add_argument("--headless")
+# chrome_options.add_argument("--disable-dev-shm-usage")
+# chrome_options.add_argument("--no-sandbox")
+# browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+# browser = webdriver.Chrome()
 
 # Function to determine the matches that are already going, and then we call the function to find the page with the live broadcast of the match.
 def current_match():
@@ -37,10 +34,10 @@ def current_match():
     current_matches = []
     for num in range(len(all_matches)):
         for match in all_matches:
-            if match.find('span', class_='esport-match-duration-dynamic') or match.find('span', class_='cybersport-matches__matches-games-count'):
+            if match.find('span', class_='esport-match-duration-dynamic') or match.find('span', class_='cybersport-matches__matches-games-count') or match.find('span', class_='live-phase'):
                 match_name = match.find('div', class_='cybersport-matches__matches-block cybersport-matches__matches-block-left').find('p', class_='cybersport-matches__matches-name').text
                 match_name2 = match.find('div', class_='cybersport-matches__matches-block cybersport-matches__matches-block-right').find('p', class_='cybersport-matches__matches-name').text
-                current_match_name = f'{match_name} {match_name2}'
+                current_match_name = f'{match_name}, {match_name2}'
                 if current_match_name in current_matches:
                     break
                 else:
@@ -49,7 +46,7 @@ def current_match():
 
     formatted_match_name = []
     for match in current_matches:
-        formatted_match_name.append(' '.join(current_matches).replace(' ', '').lower())
+        formatted_match_name.append(match.lower())
     
     return live_broadcast_page(formatted_match_name)
 
@@ -59,7 +56,7 @@ def live_broadcast_page(match_name):
     while True:
         try:
             
-            if len(match_name) < 1:
+            if not match_name:
                 return 'There are no matches now'
                 break
             
@@ -74,13 +71,14 @@ def live_broadcast_page(match_name):
 
             
             while len(all_current_matches) > 0:
-                match = f'{all_current_matches[0]} {all_current_matches[1]}'
+                match = f'{all_current_matches[0]}, {all_current_matches[1]}'
                 formatted_current_matches.append(match.lower())
                 del all_current_matches[0:2]
             
+            new_list = []
             for match1 in match_name:
                 for num,match in enumerate(formatted_current_matches):
-                    if match1 == match.replace(' ', ''):
+                    if match1.replace(' ', '') == match.replace(' ', ''):
                         WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/div[1]/div/div/div/main/div/div/div[3]/div/div[{num+1}]/a'))).click()
                         
                         match_score = browser.find_element(By.CLASS_NAME, 'series-teams__primary-label').text
@@ -117,8 +115,43 @@ def live_broadcast_page(match_name):
                                 WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[5]/div/div'))).click()
                                 return hero_set()
                     else:
-                        continue
-            break
+                        if match1.split(',')[0].strip().replace(' ', '') == match.split(',')[1].strip().replace(' ', '') and match.split(',')[1].strip().replace(' ', '') == match1.split(',')[0].strip().replace(' ', ''):
+                            WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, f'/html/body/div[1]/div/div/div/main/div/div/div[3]/div/div[{num+1}]/a'))).click()
+                        
+                            match_score = browser.find_element(By.CLASS_NAME, 'series-teams__primary-label').text
+                            type_of_series = browser.find_element(By.CLASS_NAME, 'series-teams__secondary-label').text
+                            
+                            if type_of_series == 'BO3':
+                                if match_score == '0 - 0':
+                                    return hero_set()
+                                elif match_score == '1 - 0' or match_score == '0 - 1':
+                                    WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
+                                    WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[2]/div/div'))).click()
+                                    return hero_set()
+                                elif match_score == '1 - 1':
+                                    WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
+                                    WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[3]/div/div'))).click()
+                                    return hero_set()
+                            if type_of_series == 'BO5':
+                                if match_score == '0 - 0':
+                                    return hero_set()
+                                elif match_score == '1 - 0' or match_score == '0 - 1':
+                                    WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
+                                    WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[2]/div/div'))).click()
+                                    return hero_set()
+                                elif match_score == '1 - 1' or match_score == '2 - 0' or match_score == '0 - 2':
+                                    WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
+                                    WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[3]/div/div'))).click()
+                                    return hero_set()
+                                elif match_score == '2 - 1' or '1 - 2':
+                                    WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
+                                    WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[4]/div/div'))).click()
+                                    return hero_set()
+                                elif match_score == '2 - 2':
+                                    WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
+                                    WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[5]/div/div'))).click()
+                                    return hero_set()
+            break               
         except Exception as e:
             print(e)
             continue
@@ -141,7 +174,6 @@ def hero_set():
     
     first_team_hero_set = hero_set[:5]
     second_team_hero_set = hero_set[5:]
-    browser.quit()
     
     return prediction(first_team_hero_set, second_team_hero_set, team_names)
 
@@ -211,9 +243,9 @@ def prediction(first_team_heroes, second_team_heroes, team_names):
             second_team_advantage_counter += 1
     
     if first_team_advantage_counter == 0:
-        return "The game hasn't started yet"
+        return f"The game {team_names[0]} vs {team_names[1]} hasn't started yet"
     elif first_team_advantage_counter == second_team_advantage_counter:
-        return emoji.emojize(":scream_cat:") + 'Both team have equal good picks of heroes'
+        return 'Both team have equal good draft'
     elif first_team_advantage_counter > second_team_advantage_counter:
         return emoji.emojize(":green_circle:") + f'In game {team_names[0]} vs {team_names[1]}\n\n' + emoji.emojize(":crystal_ball:") + f'{team_names[0]} has better pick'
     else:

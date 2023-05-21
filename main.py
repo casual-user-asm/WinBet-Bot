@@ -1,11 +1,11 @@
 import telebot
 from schedule_matches import schedule_today_matches
 from pars import current_match
+from random import randint
+
+
 
 bot = telebot.TeleBot('6116891770:AAHw6zmNt4yLo0dRwVK2fMM9aT1Y9v1ZFXs')
-
-matches_schedule = schedule_today_matches()
-prediction = current_match()
 
 @bot.message_handler(commands=['start'])
 def start(message):
@@ -13,10 +13,13 @@ def start(message):
 
 @bot.message_handler(commands=['schedule'])
 def schedule(message):
+    matches_schedule = schedule_today_matches()
     bot.send_message(message.chat.id, matches_schedule)
+
 
 @bot.message_handler(commands=['prediction'])
 def predict(message):
+    prediction = current_match()
     bot.send_message(message.chat.id, prediction)
 
 bot.polling(non_stop=True)
