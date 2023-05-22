@@ -20,6 +20,9 @@ def schedule(message):
 @bot.message_handler(commands=['prediction'])
 def predict(message):
     prediction = current_match()
-    bot.send_message(message.chat.id, prediction)
+    all_predictions = ''
+    for predict in prediction:
+        all_predictions += f'{predict}\n\n'
+    bot.send_message(message.chat.id, all_predictions)
 
 bot.polling(non_stop=True)

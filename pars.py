@@ -76,7 +76,7 @@ def live_broadcast_page(match_name):
                 match = f'{all_current_matches[0]}, {all_current_matches[1]}'
                 formatted_current_matches.append(match.lower())
                 del all_current_matches[0:2]
-            
+            predict_list = []
             new_list = []
             for match1 in match_name:
                 for num,match in enumerate(formatted_current_matches):
@@ -89,34 +89,34 @@ def live_broadcast_page(match_name):
                         time.sleep(2)
                         if type_of_series == 'BO3':
                             if match_score == '0 - 0':
-                                hero_set()
+                                predict_list.append(hero_set())
                             elif match_score == '1 - 0' or match_score == '0 - 1':
                                 WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                 WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[2]/div/div'))).click()
-                                hero_set()
+                                predict_list.append(hero_set())
                             elif match_score == '1 - 1':
                                 WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                 WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[3]/div/div'))).click()
-                                hero_set()
+                                predict_list.append(hero_set())
                         if type_of_series == 'BO5':
                             if match_score == '0 - 0':
-                                hero_set()
+                                predict_list.append(hero_set())
                             elif match_score == '1 - 0' or match_score == '0 - 1':
                                 WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                 WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[2]/div/div'))).click()
-                                hero_set()
+                                predict_list.append(hero_set())
                             elif match_score == '1 - 1' or match_score == '2 - 0' or match_score == '0 - 2':
                                 WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                 WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[3]/div/div'))).click()
-                                hero_set()
+                                predict_list.append(hero_set())
                             elif match_score == '2 - 1' or '1 - 2':
                                 WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                 WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[4]/div/div'))).click()
-                                hero_set()
+                                predict_list.append(hero_set())
                             elif match_score == '2 - 2':
                                 WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                 WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[5]/div/div'))).click()
-                                hero_set()
+                                predict_list.append(hero_set())
                     else:
                         if match1.split(',')[0].strip().replace(' ', '') == match.split(',')[1].strip().replace(' ', '') and match.split(',')[1].strip().replace(' ', '') == match1.split(',')[0].strip().replace(' ', ''):
                             browser.get('https://hawk.live/ru')
@@ -128,34 +128,35 @@ def live_broadcast_page(match_name):
                             
                             if type_of_series == 'BO3':
                                 if match_score == '0 - 0':
-                                    hero_set()
+                                    predict_list.append(hero_set())
                                 elif match_score == '1 - 0' or match_score == '0 - 1':
                                     WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                     WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[2]/div/div'))).click()
-                                    hero_set()
+                                    predict_list.append(hero_set())
                                 elif match_score == '1 - 1':
                                     WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                     WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[3]/div/div'))).click()
-                                    hero_set()
+                                    predict_list.append(hero_set())
                             if type_of_series == 'BO5':
                                 if match_score == '0 - 0':
-                                    hero_set()
+                                    predict_list.append(hero_set())
                                 elif match_score == '1 - 0' or match_score == '0 - 1':
                                     WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                     WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[2]/div/div'))).click()
-                                    hero_set()
+                                    predict_list.append(hero_set())
                                 elif match_score == '1 - 1' or match_score == '2 - 0' or match_score == '0 - 2':
                                     WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                     WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[3]/div/div'))).click()
-                                    hero_set()
+                                    predict_list.append(hero_set())
                                 elif match_score == '2 - 1' or '1 - 2':
                                     WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                     WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[4]/div/div'))).click()
-                                    hero_set()
+                                    predict_list.append(hero_set())
                                 elif match_score == '2 - 2':
                                     WebDriverWait(browser, 10).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[1]/div/div/div/div[2]/div/div[2]/div[2]/button/span[3]'))).click()
                                     WebDriverWait(browser, 50).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[2]/div/div/div/a[5]/div/div'))).click()
-                                    hero_set()
+                                    predict_list.append(hero_set())
+            return predict_list
             break               
         except Exception as e:
             print(e)
