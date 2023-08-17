@@ -15,6 +15,8 @@ options = Options()
 # options.headless = True
 options.binary_location = r'C:\\Program Files\\Mozilla Firefox\\firefox.exe'
 browser = webdriver.Firefox(executable_path='C:\\Users\\Влад\\Desktop\\some\\python_projects\\WinBet_Bot\\firefoxdriver\\geckodriver.exe', options=options)
+
+# Settings to use Chrome with Selenium.
 # chrome_options = webdriver.ChromeOptions()
 # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
 # chrome_options.add_argument("--headless")
