@@ -16,11 +16,10 @@ headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 
 response = requests.get(url, headers=headers)
 driver.get(url)
 
-# Wait for the element to be present with a timeout of 15 seconds
+
 element_present = EC.presence_of_element_located((By.CLASS_NAME, 'live-informer'))
 WebDriverWait(driver, 15).until(element_present)
 
-# Get the page source after the dynamic content has loaded
 src = driver.page_source
 soup = BeautifulSoup(src, 'html.parser')
 
@@ -47,7 +46,6 @@ def matches_schedule():
             for element in walter:
                 try:
                     tooltip_html = element['data-tooltip-html']
-                    # Parse the tooltip HTML separately
                     tooltip_soup = BeautifulSoup(tooltip_html, 'html.parser')
 
                     if tooltip_soup.find('b').find_next('i').previous_sibling:
