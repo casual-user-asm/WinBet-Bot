@@ -1,43 +1,105 @@
-import datetime
-from datetime import datetime
-import calendar
+from selenium import webdriver
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from bs4 import BeautifulSoup
 import requests
-import emoji
 
-def schedule_today_matches():
-    
-    url = 'https://dota2.ru/esport/matches/'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0'}
-    response = requests.get(url, headers=headers)
-    src = response.text
-    soup = BeautifulSoup(src, "html.parser")
-    all_matches = soup.find('div', class_='esport-match-future-list').find_all('div', class_='cybersport-matches__matches-match list-match-item')
-    
-    current_match = []
-    date_now = datetime.now()
-    formatted_date = datetime.strftime(date_now, "%m.%d.%Y")
-    form_date_list = formatted_date.split('.')
+options = Options()
+options.headless = True
+driver = webdriver.Firefox()
+actions = ActionChains(driver)
+url = 'https://cyberscore.live/en/'
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0'}
+response = requests.get(url, headers=headers)
+driver.get(url)
 
-    for match in all_matches:
-        name = [x.text for x in match.find_all('p', class_='cybersport-matches__matches-name')]
-        try:
-            time_match = match.find('div', class_='time').text.split('\n')[1].strip()
-            data = match.span.text.strip()
-            data_list = data.split('.')
-            if data_list[0] == form_date_list[1]:
-                today_match = f"{time_match} " + emoji.emojize(":man_tipping_hand:") + f" {name[0]} vs {name[1]}"
-                current_match.append(today_match)
+# Wait for the element to be present with a timeout of 15 seconds
+element_present = EC.presence_of_element_located((By.CLASS_NAME, 'live-informer'))
+WebDriverWait(driver, 15).until(element_present)
+
+# Get the page source after the dynamic content has loaded
+src = driver.page_source
+soup = BeautifulSoup(src, 'html.parser')
+
+
+def matches_schedule():
+
+    live_matches = []
+    upcoming_matches = []
+    game_info = {}
+    all_matches = soup.find_all('a', class_='matches-item')
+    for i in all_matches:
+        if i.find('i', class_='live-informer'):
+            match_title = i.find_all('span', class_='show-on-mb')
+            new_list = [span.text for span in match_title]
+            formatted_title = f"{' - '.join(new_list)}"
+            game_info[f"{' - '.join(new_list)}"] = []
+            live_matches.append(formatted_title)
+            link_on_match = f"https://cyberscore.live{i.get('href')}"
+
+            response2 = requests.get(link_on_match, headers=headers)
+            src2 = response2.text
+            soup2 = BeautifulSoup(src2, "html.parser")
+            walter = soup2.find_all('div', {'data-tooltip-html': True})
+            for element in walter:
+                try:
+                    tooltip_html = element['data-tooltip-html']
+                    # Parse the tooltip HTML separately
+                    tooltip_soup = BeautifulSoup(tooltip_html, 'html.parser')
+
+                    if tooltip_soup.find('b').find_next('i').previous_sibling:
+                        hero_name = tooltip_soup.find('b').find_next('i').previous_sibling.text
+                        game_info[formatted_title].append(hero_name.strip())
+                    else:
+                        continue
+                except AttributeError:
+                    pass
+
+        else:
+
+            if i.find('b'):
+
+                schedule = i.find_all('b')
+                schedule_data = [r.text for r in schedule]
+                match_title2 = i.find_all('span', class_='show-on-mb')
+                new_list2 = [span.text for span in match_title2]
+                upcoming_title = f"{' - '.join(new_list2)} starts in {''.join(schedule_data)}"
+                upcoming_matches.append(upcoming_title)
+
             else:
-                break
-        except:
-            continue
-    
-    all_matches_in_string = ''
-    for match in current_match:
-        all_matches_in_string += emoji.emojize(":alarm_clock:") + f' {match}\n\n'
-    
-    if len(all_matches_in_string) < 1:
-        return 'No matches today'
-    else:
-        return all_matches_in_string
+                if i.find('time').text == 'Today':
+                    schedule = i.find_all('time')
+                    schedule_data = [r.text for r in schedule]
+                    schedule_time = schedule_data[2]
+                    match_title = i.find_all('span', class_='show-on-mb')
+                    new_list = [span.text for span in match_title]
+                    upcoming_title = f"{' - '.join(new_list)} starts at {''.join(schedule_time)}"
+                    upcoming_matches.append(upcoming_title)
+
+    cleaned_dict = {key: [item.strip() for item in value if item.strip()] for key, value in game_info.items()}
+    clean_list = []
+    for k, v in cleaned_dict.items():
+        if v:
+            for data in v:
+                cleaned_data = data.replace('(', '').replace(')', '')
+                clean_list.append(cleaned_data)
+            cleaned_dict[k] = clean_list
+
+    final_live_match_list = []
+    final_live_match_dict = {}
+    for i in live_matches:
+        if cleaned_dict[i]:
+            final_live_match_list.append(i)
+    counter = 0
+    counter2 = 10
+    for w in final_live_match_list:
+        final_live_match_dict[w] = cleaned_dict[final_live_match_list[0]][counter:counter2]
+        counter2 += 10
+        counter += 10
+
+    driver.quit()
+
+    return upcoming_matches, live_matches, final_live_match_dict, final_live_match_list
