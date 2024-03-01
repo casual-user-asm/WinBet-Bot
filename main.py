@@ -8,7 +8,7 @@ live_matches = matches[1]
 heroes_info = matches[2]
 live_match = matches[3]
 
-bot = telebot.TeleBot('6116891770:AAHw6zmNt4yLo0dRwVK2fMM9aT1Y9v1ZFXs')
+bot = telebot.TeleBot('******')
 
 
 @bot.message_handler(commands=['start'])
